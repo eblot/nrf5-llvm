@@ -1,0 +1,39 @@
+diff --git a/modules/nrfx/mdk/gcc_startup_nrf52.S b/modules/nrfx/mdk/gcc_startup_nrf52.S
+index 495d6f2..6d5e6f4 100755
+--- a/modules/nrfx/mdk/gcc_startup_nrf52.S
++++ b/modules/nrfx/mdk/gcc_startup_nrf52.S
+@@ -68,7 +68,7 @@ __HeapBase:
+ __HeapLimit:
+     .size __HeapLimit, . - __HeapLimit
+ 
+-    .section .isr_vector
++    .section .isr_vector, "ax"
+     .align 2
+     .globl __isr_vector
+ __isr_vector:
+diff --git a/modules/nrfx/mdk/gcc_startup_nrf52810.S b/modules/nrfx/mdk/gcc_startup_nrf52810.S
+index 908fe20..6969e39 100755
+--- a/modules/nrfx/mdk/gcc_startup_nrf52810.S
++++ b/modules/nrfx/mdk/gcc_startup_nrf52810.S
+@@ -68,7 +68,7 @@ __HeapBase:
+ __HeapLimit:
+     .size __HeapLimit, . - __HeapLimit
+ 
+-    .section .isr_vector
++    .section .isr_vector, "ax"
+     .align 2
+     .globl __isr_vector
+ __isr_vector:
+diff --git a/modules/nrfx/mdk/gcc_startup_nrf52840.S b/modules/nrfx/mdk/gcc_startup_nrf52840.S
+index 98ef8dc..b8704b2 100755
+--- a/modules/nrfx/mdk/gcc_startup_nrf52840.S
++++ b/modules/nrfx/mdk/gcc_startup_nrf52840.S
+@@ -68,7 +68,7 @@ __HeapBase:
+ __HeapLimit:
+     .size __HeapLimit, . - __HeapLimit
+ 
+-    .section .isr_vector
++    .section .isr_vector, "ax"
+     .align 2
+     .globl __isr_vector
+ __isr_vector:

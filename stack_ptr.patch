@@ -1,0 +1,29 @@
+--- a/modules/nrfx/mdk/compiler_abstraction.h  2018-09-07 16:23:10.000000000 +0200
++++ b/modules/nrfx/mdk/compiler_abstraction.h  2018-09-07 16:23:10.000000000 +0200
+@@ -115,13 +115,21 @@
+         #define __PACKED           __attribute__((packed))
+     #endif
+
+-    #define GET_SP()                gcc_current_sp()
++    #if !defined(__clang__)
++         #define GET_SP()                gcc_current_sp()
+
+-    static inline unsigned int gcc_current_sp(void)
+-    {
+-        register unsigned sp __ASM("sp");
+-        return sp;
+-    }
++         static inline unsigned int gcc_current_sp(void)
++         {
++             register unsigned sp __ASM("sp");
++             return sp;
++         }
++   #else
++         #define GET_SP()                clang_current_sp()
++         static inline unsigned int clang_current_sp(void)
++         {
++             return __builtin___get_unsafe_stack_ptr();
++         }
++   #endif
+
+ #elif defined   ( __TASKING__ )
