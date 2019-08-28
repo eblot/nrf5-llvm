@@ -8,10 +8,10 @@ This repository contains some tools and patches so that the Nordic Semi
 [nRF5 SDK](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF5-SDK)
 can be build with [Clang/LLVM](https://llvm.org) toolchain.
 
-It has been succesfully tested (real product) with nRF5 SDK v14.2 and is being
-tested with nRF5 SDK v15.0 and SDK v15.1, with SoftDevice v5 and v6 series.
+It has been succesfully tested (real product) with nRF5 SDK v14.2, SDK v15.3,
+with SoftDevice S132 v5, v6 and v7 series.
 
-It is used with LLVM 6.0 series and 7.0-rc2 for arm-none-eabi Cortex-M4
+It is used from LLVM 6.0 series and up to 8.0.0 for arm-none-eabi Cortex-M4
 targets, i.e. with nRF52 SoCs. nRF51 has never been tested.
 
 Thw whole toolchain, including the Clang compiler, the integrated assembler and
@@ -47,13 +47,11 @@ on a nRF52832 SoC. Patches are warmly welcomed!
 ## Requirements
 
 * LLVM/Clang toolchain
-  * v7 is recommended as v6 linker cannot work with NordicSemi linker scripts.
-    If v6 is used, you need to either tweak the LD scripts, and/or patch the
-    LLVM linker.
+  * v7+ is recommended, v8 is the preferred version.
 * Python 3.5+ to run the scripts.
 * `patch` and EOL-converter tool such as `dos2unix`
 * Shell and common unix tools
-* nRF5 SDK v13 or greater
+* nRF5 SDK v14 or greater
 
 ## Tools
 
@@ -65,22 +63,22 @@ This tool patches some Nordic Semi header files to:
   * Rewrite all SVCALLs to properly declare to the compiler which ARM registers
     are used with SVC calls.
 
-     python3 nrfsvc.py -h
+        python3 nrfsvc.py -h
 
-     usage: nrfsvc.py [-h] [-u] -k {svc,wrap} [-d] dir
+        usage: nrfsvc.py [-h] [-u] -k {svc,wrap} [-d] dir
 
-     nRF5 service call adapter for CLANG/LLVM toolchain
+        nRF5 service call adapter for CLANG/LLVM toolchain
 
-     positional arguments:
-       dir                   top directory to seek for header files
+        positional arguments:
+          dir                   top directory to seek for header files
 
-     optional arguments:
-       -h, --help            show this help message and exit
-       -u, --update          update source file
-       -k {svc,wrap}, --kind {svc,wrap}
-                             Action to perform: "svc": Patch CALLs, "wrap": Patch
-                             SVCALL macros
-       -d, --debug           enable debug mode
+        optional arguments:
+          -h, --help            show this help message and exit
+          -u, --update          update source file
+          -k {svc,wrap}, --kind {svc,wrap}
+                                Action to perform: "svc": Patch CALLs, "wrap": Patch
+                                SVCALL macros
+          -d, --debug           enable debug mode
 
 This script should be invoked twice:
 
@@ -124,7 +122,7 @@ use of barely appropriate ZIP container.
   designed for Cortex-M series. This patch declares the isr_vector jump table
   as executable as a workaround - the clean solution would be to rewrite all
   the LD linker scripts.
-  Note that LLVM ld.lld may not safely detect this issue: depending on the
+  Note that LLVM `ld.lld` may not safely detect this issue: depending on the
   content and order of all object files it is given to link as the final
   executable, various and hard-to-debug error messages may be raised, or even
   worse: the final executable may be invalid, LLVM LD failing to compute the
