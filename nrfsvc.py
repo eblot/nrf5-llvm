@@ -5,10 +5,11 @@
 
 from argparse import ArgumentParser
 from collections import namedtuple, OrderedDict
-from os import environ, rename, walk
+from os import environ, walk
 from os.path import (basename, dirname, isdir, join as joinpath, normpath,
                      relpath)
 from re import compile as recompile
+from shutil import move
 from subprocess import Popen, TimeoutExpired, PIPE
 from sys import modules, stderr
 from tempfile import mkstemp
@@ -268,7 +269,7 @@ def main():
                             ofp.write(content)
                             nrf.generate(ofp, hprot=hprot)
                             ofp.close()
-                        rename(ofname, filename)
+                        move(ofname, filename)
                     else:
                         print("%s needs upgrade: %d syscalls" %
                               (relpath(filename), count), file=stderr)
