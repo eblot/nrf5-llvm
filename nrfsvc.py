@@ -197,7 +197,8 @@ class NrfSvcDef:
                      cwd=cwd, universal_newlines=True)
         try:
             out, _ = proc.communicate(input=self.PATCH, timeout=2.0)
-            print(out)
+            if out:
+                print(out)
         except TimeoutExpired:
             proc.kill()
 
@@ -226,6 +227,8 @@ def main():
                                help='top directory to seek for header files')
         argparser.add_argument('-u', '--update', action='store_true',
                                help='update source file')
+        argparser.add_argument('-s', '--skip-error', action='store_true',
+                               help='ignore invalid file and resume execution')
         argparser.add_argument('-k', '--kind', choices=kinds, required=True,
                                help='Action to perform: %s' % ', '.join([
                                    '"%s": %s' % it for it in kinds.items()]))
@@ -249,6 +252,22 @@ def main():
                     with open(filename, 'rt') as hfp:
                         try:
                             count = nrf.parse(hfp)
+                        except UnicodeDecodeError:
+                            # Nordic ships SDK with randomly encoded files
+                            # (ISO-8859-1, ...) for the sake of using copyright
+                            # characters, or non-ASCII quote chars - and do not
+                            # seem to care about those.
+                            # The proper fix is to first transcode those files
+                            # into UTF-8 or ASCII, the quick fix is to ignore
+                            # those files, hoping they do not require changes.
+                            if args.skip_error:
+                                print('Ignoring badly encoded file %s' %
+                                      filename, file=stderr)
+                                continue
+                            print('File %s use an unknown encoding.\n'
+                                  'Please fix it or enable the skip feature' %
+                                  filename, file=stderr)
+                            exit(1)
                         except Exception:
                             print('Cannot parse file %s' % filename,
                                   file=stderr)
